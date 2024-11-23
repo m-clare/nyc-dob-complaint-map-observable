@@ -23,6 +23,7 @@ export const FormattedEntry = ({
   descriptionMap,
   descriptionMap2021,
   priorityMap,
+  dispositionMap,
 }) => {
   const undefinedValue = (value) => {
     return value === undefined || value === "" || value === null;
@@ -52,6 +53,18 @@ export const FormattedEntry = ({
                 <span style={styles.valueStyle}>
                   {priorityMap.get(value) ??
                     "Unknown Priority (category post-2021)"}
+                </span>
+              </div>
+            </div>
+          );
+        } else if (key === "disposition_code" && !undefinedValue(value)) {
+          return (
+            <div key={key} style={styles.entryContainer}>
+              <div>
+                <span style={styles.keyStyle}>{formattedKey}:</span>
+                <span> </span>
+                <span style={styles.valueStyle}>
+                  {dispositionMap.get(value) ?? "Unknown"}
                 </span>
               </div>
             </div>

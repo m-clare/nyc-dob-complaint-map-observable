@@ -215,6 +215,7 @@ function MaplibreMap() {
         descriptionMap={descriptionMap} 
         descriptionMap2021={descriptionMap2021} 
         priorityMap={priorityMap}
+        dispositionMap={dispositionMap}
       />
       }
     </div>

@@ -76,6 +76,8 @@ const desiredFields = new Set([
   "complaint_number",
   "complaint_category",
   "community_board",
+  "disposition_date",
+  "disposition_code",
 ]);
 
 export function HUD({
@@ -83,6 +85,7 @@ export function HUD({
   descriptionMap,
   descriptionMap2021,
   priorityMap,
+  dispositionMap,
 }) {
   const data = rawData?.data ? JSON.parse(rawData?.data) : {};
   const status = rawData?.highestPriority ?? null;
@@ -129,6 +132,7 @@ export function HUD({
                         descriptionMap={descriptionMap}
                         descriptionMap2021={descriptionMap2021}
                         priorityMap={priorityMap}
+                        dispositionMap={dispositionMap}
                       />
                     </div>
                     {i !== data.length - 1 && <hr style={styles.divider} />}
