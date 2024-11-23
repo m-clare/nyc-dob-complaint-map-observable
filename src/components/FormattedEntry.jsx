@@ -24,6 +24,9 @@ export const FormattedEntry = ({
   descriptionMap2021,
   priorityMap,
 }) => {
+  const undefinedValue = (value) => {
+    return value === undefined || value === "" || value === null;
+  };
   return (
     <>
       {Object.entries(item).map(([key, value], i) => {
@@ -53,7 +56,7 @@ export const FormattedEntry = ({
               </div>
             </div>
           );
-        } else if (desiredFields.has(key)) {
+        } else if (desiredFields.has(key) && !undefinedValue(value)) {
           return (
             <div key={key} style={styles.entryContainer}>
               <div>

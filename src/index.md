@@ -70,7 +70,27 @@ const circleColors = [
   "#f2f2f2",
 ];
 
-const circleRadius = ["interpolate", ["linear"], ["zoom"], 10, 2, 15, 5];
+const circleRadiusWithLimits = [
+  "interpolate",
+  ["linear"],
+  ["zoom"],
+  10, [
+    "min",
+    ["max", 
+      ["*", ["get", "count"], 0.3],  // Base size calculation
+      2                              // Minimum size
+    ],
+    10                               // Maximum size
+  ],
+  15, [
+    "min",
+    ["max",
+      ["*", ["get", "count"], 0.6],  // Larger base size at higher zoom
+      3                              // Larger minimum size
+    ],
+    15                               // Larger maximum size
+  ]
+];
 ```
 ## NYC Department of Buildings
 ### Active Complaints: ${activeComplaints.length}
@@ -94,7 +114,7 @@ function MaplibreMap() {
     paint: {
       "circle-color": circleColors,
       "circle-opacity": 0.9,
-      "circle-radius": circleRadius,
+      "circle-radius": circleRadiusWithLimits,
     },
   } as CircleLayerSpecification;
 };
@@ -106,7 +126,6 @@ function MaplibreMap() {
     protocol = new Protocol();
     maplibregl.addProtocol("pmtiles", protocol.tile);
     protocol.add(dobFile);
-
     const map = new maplibregl.Map({
       container: mapContainerRef.current!,
       center: [-73.935242, 40.73061],
@@ -114,8 +133,6 @@ function MaplibreMap() {
       zoom: 10,
       minZoom: 10,
       maxZoom: 19.9,
-      maplibreLogo: true,
-      logoPosition: "bottom-left",
       style: {
         version: 8,
         sources: {
@@ -177,7 +194,7 @@ function MaplibreMap() {
 
   return (
   <div>
-    <div ref={mapContainerRef} style={{height: "600px"}}>
+    <div ref={mapContainerRef} style={{minHeight: "90vh"}}>
       <div ref={mapRef} />
       <HUD 
         rawData={selectedMarkerData} 

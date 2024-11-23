@@ -1,28 +1,39 @@
 import { FormattedEntry } from "./FormattedEntry.js";
 const styles = {
   container: {
-    marginLeft: "auto",
-    marginRight: "auto",
-    padding: "0 2rem",
+    margin: "1rem",
+    padding: "0 1rem",
     maxWidth: "1200px",
+    position: "absolute",
+    zIndex: 1000,
+    pointerEvents: "none",
   },
   wrapper: {
     position: "relative",
-    zIndex: 1000,
+    width: "fit-content",
   },
   card: {
     backgroundColor: "rgba(255, 255, 255, 0.8)",
-    padding: "2rem",
+    padding: "1rem",
     borderRadius: "1rem",
     maxHeight: "80vh",
     boxShadow:
       "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)",
-    ["@media (min-width: 640px)"]: {
-      maxWidth: "60vw",
-    },
-    ["@media (min-width: 768px)"]: {
-      maxWidth: "30vw",
-    },
+    display: "flex",
+    flexDirection: "column",
+    pointerEvents: "auto", // Enable interactions for the card
+    overflow: "hidden", // Prevent content from spilling out
+  },
+  contentWrapper: {
+    display: "flex",
+    flexDirection: "column",
+    height: "100%",
+  },
+  entriesContainer: {
+    maxHeight: "30vh",
+    overflowY: "auto",
+    flex: "1 1 auto",
+    marginTop: "1rem",
   },
   title: {
     fontSize: "1.25rem",
@@ -46,18 +57,14 @@ const styles = {
   sectionHeader: {
     paddingBottom: "0.5rem",
   },
-  entriesContainer: {
-    maxHeight: "30vh",
-    overflowY: "auto",
-  },
   entryWrapper: {
     fontSize: "0.875rem",
     lineHeight: "1.25rem",
   },
   divider: {
-    margin: "1rem 0.5rem",
     border: 0,
-    borderTop: "1px solid #e5e7eb",
+    padding: 0,
+    marginY: "0.5rem",
   },
 };
 
@@ -91,44 +98,43 @@ export function HUD({
     <div style={styles.container}>
       <div style={styles.wrapper}>
         <div style={cardStyle}>
-          <div>
-            <h2 style={styles.title}>
-              {address.substring(0, address.length - 6).toLowerCase()}
-            </h2>
-            <h3 style={styles.subtitle}>
-              {address.substring(address.length - 6)}
-            </h3>
-            {status && (
-              <h3 style={styles.subtitleCaps}>Highest Priority: {status}</h3>
-            )}
-            <h3 style={styles.subtitleCaps}>
-              Number of Active Complaints: {rawData.count}
-            </h3>
-          </div>
+          <div style={styles.contentWrapper}>
+            <div>
+              <h2 style={styles.title}>
+                {address.substring(0, address.length - 6).toLowerCase()}
+              </h2>
+              <h3 style={styles.subtitle}>
+                {address.substring(address.length - 6)}
+              </h3>
+              {status && (
+                <h3 style={styles.subtitleCaps}>Highest Priority: {status}</h3>
+              )}
+              <h3 style={styles.subtitleCaps}>
+                Number of Active Complaints: {rawData.count}
+              </h3>
+            </div>
 
-          <div style={styles.sectionHeader}>
-            <h3 style={styles.subtitleCaps}>Database Entries</h3>
-          </div>
+            <div style={styles.sectionHeader}>
+              <h3 style={styles.subtitleCaps}>Database Entries</h3>
+            </div>
 
-          <div style={styles.entriesContainer}>
-            {Array.isArray(data) &&
-              data.map((item, i) => (
-                <div key={i}>
-                  <div style={styles.entryWrapper}>
-                    <p>Entry {i + 1}</p>
-                    <FormattedEntry
-                      item={item}
-                      desiredFields={desiredFields}
-                      descriptionMap={descriptionMap}
-                      descriptionMap2021={descriptionMap2021}
-                      priorityMap={priorityMap}
-                    />
-                    <p>Details for {item.complaint_number || "N/A"}</p>
+            <div style={styles.entriesContainer}>
+              {Array.isArray(data) &&
+                data.map((item, i) => (
+                  <div key={i}>
+                    <div style={styles.entryWrapper}>
+                      <FormattedEntry
+                        item={item}
+                        desiredFields={desiredFields}
+                        descriptionMap={descriptionMap}
+                        descriptionMap2021={descriptionMap2021}
+                        priorityMap={priorityMap}
+                      />
+                    </div>
+                    {i !== data.length - 1 && <hr style={styles.divider} />}
                   </div>
-
-                  {i !== data.length - 1 && <hr style={styles.divider} />}
-                </div>
-              ))}
+                ))}
+            </div>
           </div>
         </div>
       </div>
