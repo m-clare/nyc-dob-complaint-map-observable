@@ -1,0 +1,70 @@
+.container {
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.wrapper {
+  position: relative;
+}
+
+.card {
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 2rem;
+  border-radius: 1rem;
+  max-height: 80vh;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+@media (min-width: 640px) {
+  .card {
+    max-width: 60vw;
+  }
+}
+
+@media (min-width: 768px) {
+  .card {
+    max-width: 30vw;
+  }
+}
+
+.title {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 700;
+}
+
+.subtitleCaps {
+  composes: subtitle;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.sectionHeader {
+  padding-bottom: 0.5rem;
+}
+
+.entriesContainer {
+  max-height: 30vh;
+  overflow-y: auto;
+}
+
+.entryWrapper {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.divider {
+  margin: 1rem 0.5rem;
+  border: 0;
+  border-top: 1px solid #e5e7eb;
+}
