@@ -101,6 +101,10 @@ const circleRadiusWithLimits = [
 ## NYC Department of Buildings
 ### Active Complaints: ${activeComplaints.length}
 ### Date Run: ${runDate}
+
+```js
+Inputs.table(activeComplaints)
+```
 ```tsx
 function MaplibreMap() {
   const [selectedMarkerData, setSelectedMarkerData] = useState({});
