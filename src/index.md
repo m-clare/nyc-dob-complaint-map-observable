@@ -146,6 +146,7 @@ function MaplibreMap() {
       zoom: 10,
       minZoom: 10,
       maxZoom: 19.9,
+      maxBounds: [[74.47288248742949, 40.46738321871237], [-73.39760151257211, 41.06502038646664 ]],
       style: {
         version: 8,
         sources: {
