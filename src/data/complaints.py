@@ -327,7 +327,7 @@ if __name__ == "__main__":
         geomatched_df.to_csv(output_name, index=False)
 
         # output required json for tippecanoe
-        process_dob_complaints(output_name, "dobcomplaints_complaint_category.json")
+        process_dob_complaints(output_name, "../assets/dobcomplaints_complaint_category.json")
 
         # output for data loader
         if complaint_df is not None:
