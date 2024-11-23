@@ -2,6 +2,12 @@
 toc: false
 ---
 
+<style> 
+#observablehq-footer {
+   margin-top: 1rem;
+   margin-bottom: 1rem;
+ }
+</style>
 ```js
 import maplibregl from "npm:maplibre-gl"
 import { PMTiles, Protocol } from "npm:pmtiles@3.0.3";
@@ -15,9 +21,9 @@ const activeComplaints = FileAttachment("complaints.csv").csv()
 ```
 
 ```js
+const runDate = new Set(activeComplaints.map((complaint) => complaint.dobrundate))
 const filteredComplaints = new Set(activeComplaints.map((complaint) => complaint.complaint_category))
 ```
-
 
 ```js
 
@@ -80,7 +86,7 @@ const circleRadiusWithLimits = [
       ["*", ["get", "count"], 0.3],  // Base size calculation
       2                              // Minimum size
     ],
-    10                               // Maximum size
+    12                               // Maximum size
   ],
   15, [
     "min",
@@ -88,12 +94,13 @@ const circleRadiusWithLimits = [
       ["*", ["get", "count"], 0.6],  // Larger base size at higher zoom
       5                              // Larger minimum size
     ],
-    15                               // Larger maximum size
+    30                               // Larger maximum size
   ]
 ];
 ```
 ## NYC Department of Buildings
 ### Active Complaints: ${activeComplaints.length}
+### Date Run: ${runDate}
 ```tsx
 function MaplibreMap() {
   const [selectedMarkerData, setSelectedMarkerData] = useState({});
@@ -196,14 +203,15 @@ function MaplibreMap() {
 
   return (
   <div>
-    <div ref={mapContainerRef} style={{minHeight: "90vh"}}>
+    <div ref={mapContainerRef} style={{minHeight: "80vh"}}>
       <div ref={mapRef} />
-      <HUD 
+      {hudVisible && <HUD 
         rawData={selectedMarkerData} 
         descriptionMap={descriptionMap} 
         descriptionMap2021={descriptionMap2021} 
         priorityMap={priorityMap}
       />
+      }
     </div>
   </div>
   );
