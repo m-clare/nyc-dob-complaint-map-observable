@@ -158,7 +158,6 @@ async def process_all_chunks(missing_strings):
             if result is not None:
                 results.append((result, chunk_index))
 
-
     # Sort results by chunk index to maintain order
     results.sort(key=lambda x: x[1])
     return [r[0] for r in results]
@@ -307,7 +306,17 @@ async def get_results(original_address_df, complaint_df):
     complaints_matched = complaint_df.merge(
         address_df_unique, how="inner", on="address_string"
     )
-    return complaints_matched
+
+    complaints_merged = complaint_df.merge(
+        address_df_unique, how="left", on="address_string"
+    )
+
+    return [complaints_merged, complaints_matched]
+
+
+df = pd.read_csv("geocode_address.csv")
+complaint_df = get_raw_active_results(app_token)
+[all_complaints_df, geomatched_df] = asyncio.run(get_results(df, complaint_df))
 
 
 if __name__ == "__main__":
@@ -320,14 +329,16 @@ if __name__ == "__main__":
         df = pd.read_csv("geocode_address.csv")
         # Get the complaints data
         complaint_df = get_raw_active_results(app_token)
-        geomatched_df = asyncio.run(get_results(df, complaint_df))
+        [all_complaints, geomatched_df] = asyncio.run(get_results(df, complaint_df))
         current_date = datetime.now().strftime("%Y-%m-%d")
         # output matched complaints for record
         output_name = f"{current_date}_matched-complaints.csv"
         geomatched_df.to_csv(output_name, index=False)
 
         # output required json for tippecanoe
-        process_dob_complaints(output_name, "../assets/dobcomplaints_complaint_category.json")
+        process_dob_complaints(
+            output_name, "../assets/dobcomplaints_complaint_category.json"
+        )
 
         # output for data loader
         if complaint_df is not None:

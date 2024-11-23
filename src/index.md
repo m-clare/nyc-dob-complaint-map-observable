@@ -7,7 +7,12 @@ toc: false
    margin-top: 1rem;
    margin-bottom: 1rem;
  }
+
+h1, h2, h3, h4, h5, h6 {
+   font-family: "Roboto","Helvetica","Arial",sans-serif
+}
 </style>
+
 ```js
 import maplibregl from "npm:maplibre-gl"
 import { PMTiles, Protocol } from "npm:pmtiles@3.0.3";
@@ -18,6 +23,7 @@ const maptiler3dGl = FileAttachment("assets/positron-style.json").json();
 const complaintCategory = FileAttachment("assets/dobcomplaints_complaint_category.json").json();
 const dobComplaints2021 = FileAttachment("assets/complaint_category.json").json();
 const activeComplaints = FileAttachment("complaints.csv").csv()
+const disposition = FileAttachment("assets/disposition.csv").csv()
 ```
 
 ```js
@@ -26,6 +32,7 @@ const filteredComplaints = new Set(activeComplaints.map((complaint) => complaint
 ```
 
 ```js
+const dispositionMap = new Map(disposition.map((d) => ([d.code, d.text])))
 
 const descriptionMap = new Map(
   complaintCategory.map((d) => [d.CODE, d["COMPLAINT CATEGORY DESCRIPTION"]])
@@ -44,10 +51,58 @@ const complaintLayersById = [
 ];
 
 const priorityMap = new Map(complaintCategory.map((d) => [d.CODE, d.PRIORITY]));
+
+const mergedComplaintDescription = new Map([...descriptionMap2021, descriptionMap])
+```
+
+```js
+function getBorough(zipCode) {
+    const zip = parseInt(zipCode);
+
+    if (isNaN(zip) || zip.toString().length !== 5) {
+        throw new Error('Invalid ZIP code format. Please provide a 5-digit ZIP code.');
+    }
+
+    // Manhattan
+    if (zip >= 10001 && zip <= 10282) {
+        return 'Manhattan';
+    }
+
+    // Staten Island
+    if (zip >= 10301 && zip <= 10314) {
+        return 'Staten Island';
+    }
+
+    // Bronx
+    if (zip >= 10451 && zip <= 10475) {
+        return 'Bronx';
+    }
+
+    // Queens
+    if ((zip >= 11001 && zip <= 11109) || (zip >= 11351 && zip <= 11697)) {
+        return 'Queens';
+    }
+
+    // Brooklyn
+    if (zip >= 11201 && zip <= 11256) {
+        return 'Brooklyn';
+    }
+
+    // If no match is found
+    console.log(zip)
+    return 'Invalid NYC Zip Code';
+}
 ```
 <link rel="stylesheet" type="text/css" href="npm:maplibre-gl@4.0.2/dist/maplibre-gl.css">
 
-
+```js
+const complaintsByBorough = d3.flatRollup(activeComplaints.map((complaint) => ({...complaint, borough: getBorough(complaint.zip_code)})), v => v.length, d => d.complaint_category, d => d.borough).map((entry) => ({complaintCategory: mergedComplaintDescription.get(entry[0]) ?? entry[0], borough: entry[1], count: entry[2]}))
+```
+```js
+const sortedComplaints = Array.from(d3.rollup(complaintsByBorough, v => ({
+total: d3.sum(v, d => d.count), boroughs: v
+}), d => d.complaintCategory)).sort((a, b) => b[1].total - a[1].total)
+```
 ```js
 import {useEffect, useRef, useState} from "npm:react";
 ```
@@ -105,6 +160,32 @@ const circleRadiusWithLimits = [
 ```js
 Inputs.table(activeComplaints)
 ```
+```js
+const complaintsInput = view(Inputs.select(new Map(sortedComplaints.map((entry) => ([`${entry[0]} (${entry[1].total})`, entry[0]]))), {multiple: true, label: "Complaints Category", width: 550}))
+```
+```js
+const selectedValues = complaintsInput.length > 0 ? sortedComplaints.filter((value) => complaintsInput.includes(value[0])).map((complaintCategory) => (complaintCategory[1].boroughs)).flat() : sortedComplaints[0][1].boroughs
+```
+```js
+Plot.plot({
+  x: {tickFormat: "s", grid: true},
+  y: {axis: null},
+  color: {scheme: "Observable10", legend: true, type: "ordinal"},
+  marks: [
+    Plot.barX(selectedValues, {
+      y: "borough",
+      x: "count",
+      fill: "borough",
+      fy: "complaintCategory",
+      sort: {y: "y"}
+    }),
+    Plot.ruleX([0]),
+  ],
+  width: 1376,
+  "marginLeft": 360,
+})
+```
+
 ```tsx
 function MaplibreMap() {
   const [selectedMarkerData, setSelectedMarkerData] = useState({});
@@ -146,7 +227,7 @@ function MaplibreMap() {
       zoom: 10,
       minZoom: 10,
       maxZoom: 19.9,
-      maxBounds: [[74.47288248742949, 40.46738321871237], [-73.39760151257211, 41.06502038646664 ]],
+      maxBounds: [[-74.47288248742949, 40.46738321871237], [-73.39760151257211, 41.06502038646664 ]],
       style: {
         version: 8,
         sources: {
