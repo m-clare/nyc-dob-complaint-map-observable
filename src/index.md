@@ -67,7 +67,7 @@ const circleColors = [
   "#fecc5c",
   "D",
   "#ffffb2",
-  "#f2f2f2",
+  "#a4a4a4",
 ];
 
 const circleRadiusWithLimits = [
@@ -86,7 +86,7 @@ const circleRadiusWithLimits = [
     "min",
     ["max",
       ["*", ["get", "count"], 0.6],  // Larger base size at higher zoom
-      3                              // Larger minimum size
+      5                              // Larger minimum size
     ],
     15                               // Larger maximum size
   ]
@@ -115,6 +115,8 @@ function MaplibreMap() {
       "circle-color": circleColors,
       "circle-opacity": 0.9,
       "circle-radius": circleRadiusWithLimits,
+      "circle-stroke-width": 0.5,
+      "circle-stroke-color": '#fff'
     },
   } as CircleLayerSpecification;
 };
