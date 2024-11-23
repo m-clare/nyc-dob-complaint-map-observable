@@ -89,7 +89,6 @@ function getBorough(zipCode) {
     }
 
     // If no match is found
-    console.log(zip)
     return 'Invalid NYC Zip Code';
 }
 ```
