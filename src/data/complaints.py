@@ -145,7 +145,7 @@ async def process_all_chunks(missing_strings):
         start = end
 
     # Create TCP connector with limits
-    connector = aiohttp.TCPConnector(limit=10)  # Limit concurrent connections
+    connector = aiohttp.TCPConnector(limit=10)
 
     async with aiohttp.ClientSession(connector=connector) as session:
         # Create tasks for each chunk
