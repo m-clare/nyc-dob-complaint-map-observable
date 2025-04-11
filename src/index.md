@@ -27,7 +27,7 @@ const disposition = FileAttachment("assets/disposition.csv").csv()
 ```
 
 ```js
-const runDate = new Set(activeComplaints.map((complaint) => complaint.dobrundate))
+const runDate = (new Date()).toUTCString()
 const filteredComplaints = new Set(activeComplaints.map((complaint) => complaint.complaint_category))
 ```
 
